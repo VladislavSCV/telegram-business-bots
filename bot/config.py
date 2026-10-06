@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -34,6 +35,12 @@ class Settings(BaseSettings):
     # After a booking the demo sends a sample reminder after this delay (real reminders: 2 h before).
     demo_reminder_seconds: int = 60
     reminder_before_minutes: int = 120
+
+    @field_validator("manager_chat_id", mode="before")
+    @classmethod
+    def empty_is_none(cls, value):
+        # An empty line in .env (MANAGER_CHAT_ID=) means "not set", not an invalid number.
+        return None if isinstance(value, str) and not value.strip() else value
 
 
 @lru_cache

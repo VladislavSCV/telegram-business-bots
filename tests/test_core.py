@@ -145,3 +145,10 @@ async def test_crm_webhook():
         assert await send_to_crm("https://crm.example/hook", {"id": 1}, client)
     assert received == [b'{"id":1}'] or received == [b'{"id": 1}']
     assert not await send_to_crm("", {"id": 1})
+
+
+def test_empty_manager_chat_id_is_none(monkeypatch):
+    monkeypatch.setenv("MANAGER_CHAT_ID", "")
+    assert Settings(_env_file=None).manager_chat_id is None
+    monkeypatch.setenv("MANAGER_CHAT_ID", "42")
+    assert Settings(_env_file=None).manager_chat_id == 42
