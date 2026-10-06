@@ -1,0 +1,22 @@
+services:
+  bot:
+    image: ${IMAGE:-ghcr.io/vladislavscv/telegram-business-bots:latest}
+    build: .
+    env_file: .env
+    volumes:
+      - bot_data:/app/data
+      # Replace the demo knowledge base with your own Markdown files without rebuilding:
+      # - ./knowledge:/app/knowledge:ro
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  bot_data:
